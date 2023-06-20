@@ -20,6 +20,7 @@ class MountainBike(Bicycle):
     def spares(self):
         super_spares = super().spares()
         super_spares['rear_shock'] = self.rear_shock
+        super_spares['tire_size'] = "2.1"
         return super_spares
 
 
@@ -40,4 +41,7 @@ def test_spares_mountain_bike():
     assert mountain_bike.size == 'S'
 
     assert mountain_bike.spares() == {
-        'chain': '10-speed', 'tire_size': '23', 'tape_color': None, 'rear_shock': 'Fox'}
+        'chain': '10-speed', 
+        'tire_size': '2.1', 
+        'tape_color': None, 
+        'rear_shock': 'Fox'}

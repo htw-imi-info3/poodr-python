@@ -28,6 +28,7 @@ class MountainBike(Bicycle):
     def spares(self):
         spares = super().spares()
         spares.update({'rear_shock': self.rear_shock})
+        spares['tire_size'] = "2.1"
         return spares
 
 

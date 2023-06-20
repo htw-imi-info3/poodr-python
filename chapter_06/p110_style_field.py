@@ -1,6 +1,6 @@
 class Bicycle:
-    def __init__(self, style, size, tape_color, front_shock=None, 
-                 rear_shock = None):
+    def __init__(self, style, size, tape_color, front_shock=None,
+                 rear_shock=None):
         self.style = style
         self.size = size
         self.tape_color = tape_color

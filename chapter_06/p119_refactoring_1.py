@@ -11,7 +11,7 @@ import pytest
 class Bicycle:
     def __init__(self, **kwargs):
         pass
-    
+
     def spares(self):
         return {}
 
@@ -60,10 +60,12 @@ mountain_bike = MountainBike(
     rear_shock='Fox'
 )
 
+
 @pytest.mark.xfail(reason="no super init")
 def test_spares_mountain_bike():
     assert mountain_bike.spares() == {
         'chain': '10-speed', 'tire_size': '23', 'tape_color': None, 'rear_shock': 'Fox'}
+
 
 @pytest.mark.xfail(reason="no super init")
 def test_size_mountain_bike():

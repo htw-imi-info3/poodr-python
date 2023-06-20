@@ -1,7 +1,7 @@
 class Bicycle:
     def __init__(self, **kwargs):
         self.size = kwargs['size']
-        self.tape_color = kwargs['tape_color']
+        self.tape_color = kwargs.get('tape_color', None)
 
     def spares(self):
         return {
@@ -12,6 +12,11 @@ class Bicycle:
 
 
 class MountainBike(Bicycle):
+    def __init__(self, **kwargs):
+        self.rear_shock = kwargs['rear_shock']
+        self.front_shock = kwargs.get('front_shock', None)
+        super().__init__(**kwargs)
+        
     def spares(self):
         super_spares = super().spares()
         super_spares['rear_shock'] = self.rear_shock

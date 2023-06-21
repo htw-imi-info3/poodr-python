@@ -1,6 +1,6 @@
 class Bicycle:
 
-    def __init__(self, args={}):
+    def __init__(self, **args):
         self.size = args.get('size')
         self.parts = args.get('parts')
 
@@ -9,10 +9,10 @@ class Bicycle:
 
 
 class Parts:
-    def __init__(self, args={}):
+    def __init__(self, **args):
         self.chain = args.get('chain') or self.default_chain()
         self.tire_size = args.get('tire_size') or self.default_tire_size()
-        self.post_initialize(args)
+        self.post_initialize(**args)
 
     def spares(self):
         spares = {
@@ -25,7 +25,7 @@ class Parts:
     def default_tire_size(self):
         raise NotImplementedError
 
-    def post_initialize(self, args):
+    def post_initialize(self, **args):
         pass
 
     def local_spares(self):
@@ -36,7 +36,7 @@ class Parts:
 
 
 class RoadBikeParts(Parts):
-    def post_initialize(self, args):
+    def post_initialize(self, **args):
         self.tape_color = args.get('tape_color')
 
     def local_spares(self):
@@ -47,7 +47,7 @@ class RoadBikeParts(Parts):
 
 
 class MountainBikeParts(Parts):
-    def post_initialize(self, args):
+    def post_initialize(self, **args):
         self.front_shock = args.get('front_shock')
         self.rear_shock = args.get('rear_shock')
 
@@ -61,10 +61,8 @@ class MountainBikeParts(Parts):
 # Testing the code
 
 
-road_bike = Bicycle({
-    'size': 'L',
-    'parts': RoadBikeParts({'tape_color': 'red'})
-})
+road_bike = Bicycle(size='L',
+                    parts=RoadBikeParts(tape_color='red'))
 
 
 def test_road_bike():
@@ -74,14 +72,12 @@ def test_road_bike():
                                   'tape_color': 'red'}
 
 
-mountain_bike = Bicycle({
-    'size': 'L',
-    'parts': MountainBikeParts({'rear_shock': 'Fox'})
-})
+mountain_bike = Bicycle(size='L',
+                        parts=MountainBikeParts(rear_shock='Fox'))
 
 
 def test_mountain_bike():
     assert mountain_bike.size == 'L'
     assert mountain_bike.spares() == {'tire_size': '2.1',
-                                  'chain': '10-speed',
-                                  'rear_shock': 'Fox'}
+                                      'chain': '10-speed',
+                                      'rear_shock': 'Fox'}

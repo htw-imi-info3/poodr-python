@@ -18,3 +18,20 @@ def test_recumbent_bike_spares():
         'Part(name=chain,description=9-speed,needs_spare=True), ' +\
         'Part(name=tire_size,description=28,needs_spare=True), ' +\
         'Part(name=flag,description=tall and orange,needs_spare=True)])'
+
+
+
+# But: all parts need to be specified explicitly now.
+
+RECUMBENT_CONFIG_2 = [
+    
+    ['tire_size', '28'],
+    ['flag', 'tall and orange']
+]
+
+
+def test_recumbent_bike_spares_2():
+    recumbent_bike = Bicycle(size='S', parts=PartsFactory.build(RECUMBENT_CONFIG_2))
+    assert str(recumbent_bike.spares()) == 'Parts(parts=[' +\
+        'Part(name=tire_size,description=28,needs_spare=True), ' +\
+        'Part(name=flag,description=tall and orange,needs_spare=True)])'

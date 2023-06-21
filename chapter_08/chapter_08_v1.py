@@ -1,3 +1,6 @@
+import pytest
+
+
 class Bicycle:
 
     def __init__(self, **args):
@@ -23,7 +26,8 @@ class Parts:
         return spares
 
     def default_tire_size(self):
-        raise NotImplementedError
+        raise NotImplementedError(
+            'Parts subclasses must implement default_tire_size')
 
     def post_initialize(self, **args):
         pass
@@ -81,3 +85,4 @@ def test_mountain_bike():
     assert mountain_bike.spares() == {'tire_size': '2.1',
                                       'chain': '10-speed',
                                       'rear_shock': 'Fox'}
+

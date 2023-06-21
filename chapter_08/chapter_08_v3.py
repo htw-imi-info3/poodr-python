@@ -32,6 +32,9 @@ class Part:
     def __eq__(self, other):
         return self.name == other.name
 
+    def __repr__(self):
+        return f"Part(name={self.name},description={self.description},needs_spare={self.needs_spare})"
+
 
 class Parts(abc.Sequence):
     def __init__(self, parts=None):
@@ -42,7 +45,7 @@ class Parts(abc.Sequence):
 
     def __getitem__(self, index):
         return self.parts.__getitem__(index)
-    
+
     def __len__(self):
         return len(self.parts)
 
@@ -82,16 +85,29 @@ class PartsFactory:
 road_parts = PartsFactory.build(ROAD_CONFIG)
 mountain_parts = PartsFactory.build(MOUNTAIN_CONFIG)
 
-road_bike = Bicycle(size='L', 
+road_bike = Bicycle(size='L',
                     parts=PartsFactory.build(ROAD_CONFIG))
-mountain_bike = Bicycle(size='M', 
+mountain_bike = Bicycle(size='M',
                         parts=PartsFactory.build(MOUNTAIN_CONFIG))
 
 
-
 def test_road_bike():
-    assert road_bike.spares() == {}
- 
+    assert str(road_bike.spares()) == 'Parts(parts=[' +\
+        'Part(name=chain,description=10-speed,needs_spare=True), ' +\
+        'Part(name=tire_size,description=23,needs_spare=True), ' +\
+        'Part(name=tape_color,description=red,needs_spare=True)])'
+
+
 def test_mountain_bike():
-    assert mountain_bike.spares() == {}
-       
+    assert str(mountain_bike.spares()) == 'Parts(parts=[' +\
+        'Part(name=chain,description=10-speed,needs_spare=True), ' +\
+        'Part(name=tire_size,description=2.1,needs_spare=True), ' +\
+        'Part(name=rear_shock,description=Fox,needs_spare=True)])'
+
+
+def test_mountain_bike_parts():
+    assert str(mountain_bike.parts) == 'Parts(parts=[' +\
+        'Part(name=chain,description=10-speed,needs_spare=True), ' +\
+        'Part(name=tire_size,description=2.1,needs_spare=True), ' +\
+        'Part(name=front_shock,description=Manitou,needs_spare=False), ' +\
+        'Part(name=rear_shock,description=Fox,needs_spare=True)])'

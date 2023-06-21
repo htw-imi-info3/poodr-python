@@ -16,28 +16,38 @@ class Bicycle:
         return f"Bicycle(size={self.size}, parts={self.parts})"
 
 
+@functools.total_ordering
 class Part:
-    def __init__(self, name=None, description=None, needs_spare=True):
-        self.name = name
-        self.description = description
-        self.needs_spare = needs_spare
+    def __init__(self, **args):
+        self.name = args.get('name')
+        self.description = args.get('description')
+        self.needs_spare = args.get('needs_spare', True)
 
-    def __repr__(self):
-        return f"Part(name={self.name}, description={self.description}, needs_spare={self.needs_spare})"
+    def needs_spare(self):
+        return self.needs_spare
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __eq__(self, other):
+        return self.name == other.name
 
 
-class Parts:
+class Parts(abc.Sequence):
     def __init__(self, parts=None):
         self.parts = parts or []
 
     def spares(self):
         return Parts([part for part in self.parts if part.needs_spare])
 
+    def __getitem__(self, index):
+        return self.parts.__getitem__(index)
+    
     def __len__(self):
         return len(self.parts)
 
-    def __iter__(self):
-        return iter(self.parts)
+    def __add__(self, other):
+        return Parts(self.parts + list(other))
 
     def __repr__(self):
         return f"Parts(parts={self.parts})"
@@ -59,8 +69,12 @@ MOUNTAIN_CONFIG = [
 
 class PartsFactory:
     @staticmethod
-    def build(config: List[List[str]], part_class=Part, parts_class=Parts) -> Parts:
-        parts = [part_class(name=part[0], description=part[1], needs_spare=part[2] if len(part) > 2 else True)
+    def build(config: List[List[str]],
+              part_class=Part,
+              parts_class=Parts) -> Parts:
+        parts = [part_class(name=part[0],
+                 description=part[1],
+                 needs_spare=part[2] if len(part) > 2 else True)
                  for part in config]
         return parts_class(parts)
 
@@ -68,8 +82,16 @@ class PartsFactory:
 road_parts = PartsFactory.build(ROAD_CONFIG)
 mountain_parts = PartsFactory.build(MOUNTAIN_CONFIG)
 
-road_bike = Bicycle(size='L', parts=PartsFactory.build(ROAD_CONFIG))
-print(road_bike.spares())  # -> Parts(parts=[Part(name=chain, description=10-speed, needs_spare=True), ...])
+road_bike = Bicycle(size='L', 
+                    parts=PartsFactory.build(ROAD_CONFIG))
+mountain_bike = Bicycle(size='M', 
+                        parts=PartsFactory.build(MOUNTAIN_CONFIG))
 
-mountain_bike = Bicycle(size='L', parts=PartsFactory.build(MOUNTAIN_CONFIG))
-print(mountain_bike.spares())  # -> Parts(parts=[Part(name=chain, description=10-speed, needs_spare=True), ...])
+
+
+def test_road_bike():
+    assert road_bike.spares() == {}
+ 
+def test_mountain_bike():
+    assert mountain_bike.spares() == {}
+       

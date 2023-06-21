@@ -1,4 +1,5 @@
 import functools
+import collections.abc as abc
 
 
 class Bicycle:
@@ -25,7 +26,7 @@ def is_iterable(something):
     return True
 
 
-class Parts:
+class Parts(abc.Sequence):
     """ a list of Part elements
     in the Ruby version, Parts behaves like a list(array)
     by delegating relevant methods to the wrapped list (self.parts)
@@ -43,17 +44,24 @@ class Parts:
     def spares(self):
         return Parts([part for part in self.parts if part.needs_spare])
 
+    def __getitem__(self, index):
+        return self.parts.__getitem__(index)
+    
     def __len__(self):
         return len(self.parts)
 
-    def __iter__(self):
-        return iter(self.parts)
+    def __add__(self, other):
+        """implements the + operator
 
-    # def __add__(self, other):
-    #     if is_iterable(other):
-    #         return Parts(list(self.parts) + list(other))
-    #     else:
-    #         raise TypeError('other object needs to be iterable')
+        unlike in the Ruby original, all unknown methods
+        are delegated to the wrapped list.
+        While this would be possible in python,
+        more explicit ways are more pythonic.
+        """
+        if is_iterable(other):
+            return Parts(list(self.parts) + list(other))
+        else:
+            raise TypeError('other object needs to be iterable')
 
     def __repr__(self):
         return f"Parts(parts={self.parts})"
@@ -102,8 +110,8 @@ def test_parts_has_len():
 def test_parts_can_be_combined():
     p1 = Parts([chain, mountain_tire, front_shock, rear_shock])
     p2 = Parts([chain, road_tire, tape])
-    p1.extend(p2)
-    assert len(p1) == 3
+    p3 = p1 + p2
+    assert len(p3) == 7
 
 
 mountain_bike = Bicycle(
@@ -125,12 +133,3 @@ def test_road_bike():
     assert len(road_bike.parts) == 3
     assert len(road_bike.spares()) == 3
 
-# class Parts:
-#    def_delegators = forwardable.def_delegators
-#
-#    def __init__(self, parts):
-#        self.parts = parts
-#
-# assert mountain_bike.parts + road_bike.parts
-# ==  TypeError: unsupported operand type(s) for +: 'Parts' and 'Parts'
-#

@@ -1,3 +1,4 @@
+import pytest
 import functools
 import collections.abc as abc
 
@@ -10,20 +11,6 @@ class Bicycle:
 
     def spares(self):
         return self.parts.spares()
-
-
-def is_iterable(something):
-    """
-    see https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable
-
-    Returns:
-        boolean: True if object implements iter()
-    """
-    try:
-        iter(something)
-    except TypeError:
-        return False
-    return True
 
 
 class Parts(abc.Sequence):
@@ -51,17 +38,15 @@ class Parts(abc.Sequence):
         return len(self.parts)
 
     def __add__(self, other):
-        """implements the + operator
+        """
+        implements the + operator
 
-        unlike in the Ruby original, all unknown methods
+        In the Ruby original, all unknown methods
         are delegated to the wrapped list.
         While this would be possible in python,
         more explicit ways are more pythonic.
         """
-        if is_iterable(other):
-            return Parts(list(self.parts) + list(other))
-        else:
-            raise TypeError('other object needs to be iterable')
+        return Parts(self.parts + list(other))
 
     def __repr__(self):
         return f"Parts(parts={self.parts})"
@@ -113,6 +98,12 @@ def test_parts_can_be_combined():
     p3 = p1 + p2
     assert len(p3) == 7
 
+
+def test_parts_can_be_combined_but_not_with_non_iterable():
+    p1 = Parts([chain, mountain_tire, front_shock, rear_shock])
+    with pytest.raises(TypeError, match='object is not iterable'):
+        p3 = p1 + road_tire
+   
 
 mountain_bike = Bicycle(
     size='L',

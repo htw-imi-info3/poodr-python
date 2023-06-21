@@ -15,6 +15,6 @@ while true; do
     #pytest -x -vv song
     #pytest -vv -x test/*.py
     echo "calling  pytest -vv  $subdir"
-    pytest -vv   $subdir/*.py
+    pytest -vv   $subdir/**/*.py
     fswatch **/*.py  -1
 done

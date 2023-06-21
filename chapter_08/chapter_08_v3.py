@@ -1,10 +1,13 @@
 from typing import List
+import functools
+import collections.abc as abc
 
 
 class Bicycle:
-    def __init__(self, size=None, parts=None):
-        self.size = size
-        self.parts = parts
+
+    def __init__(self, **args):
+        self.size = args.get('size')
+        self.parts = args.get('parts')
 
     def spares(self):
         return self.parts.spares()

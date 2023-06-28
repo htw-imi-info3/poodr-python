@@ -68,6 +68,9 @@ class Part:
 
     def __eq__(self, other):
         return self.name == other.name
+    
+    def __repr__(self):
+        return f"Part(name={self.name}, description={self.description}, needs_spare={self.needs_spare})"
 
 
 # Tests

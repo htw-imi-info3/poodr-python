@@ -1,8 +1,9 @@
 import pytest
 
-# this includes the whole refactoring in 
-# the book - check out the ruby version 
+# this includes the whole refactoring in
+# the book - check out the ruby version
 # for more detailed steps
+
 
 class Bicycle:
     def __init__(self, **kwargs):
@@ -17,8 +18,8 @@ class Bicycle:
         spares = {
             'chain': self.chain,
             'tire_size': self.tire_size
-        } | self.special_spares()
-        return spares 
+        } | self.local_spares()
+        return spares
 
 
 class RoadBike(Bicycle):
@@ -30,9 +31,8 @@ class RoadBike(Bicycle):
     def default_tire_size(self):
         return '23'
 
-    def special_spares(self):
-        return { 'tape_color': self.tape_color }
-        
+    def local_spares(self):
+        return {'tape_color': self.tape_color}
 
 
 class MountainBike(Bicycle):
@@ -44,9 +44,8 @@ class MountainBike(Bicycle):
     def default_tire_size(self):
         return '2.1'
 
-    def special_spares(self):
+    def local_spares(self):
         return {'rear_shock': self.rear_shock}
-        
 
 
 # Testing the code
@@ -60,12 +59,15 @@ def test_spares_road_bike():
                                   'chain': '10-speed',
                                   'tape_color': 'red'}
 
-comfy_road_bike = RoadBike(size='M', tape_color='weiss', tire_size= '25')
+
+comfy_road_bike = RoadBike(size='M', tape_color='weiss', tire_size='25')
+
+
 def test_spares_comfy_road_bike():
     assert comfy_road_bike.size == 'M'
     assert comfy_road_bike.spares() == {'tire_size': '25',
-                                  'chain': '10-speed',
-                                  'tape_color': 'weiss'}
+                                        'chain': '10-speed',
+                                        'tape_color': 'weiss'}
 
 
 def test_defaults_road_bike():
@@ -99,16 +101,17 @@ def test_defaults_mountain_bike():
 class RecumbentBike(Bicycle):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
+
     def default_tire_size(self):
         return '35'
-    
-    def special_spares(self):
+
+    def local_spares(self):
         return {'sitz': 'leder'}
 
 
 liegerad = RecumbentBike()
 
+
 def test_rec_spares():
-    assert liegerad.spares() ==  {'chain': '10-speed', 'sitz': 'leder', 'tire_size': '35'}
-        
+    assert liegerad.spares() == {'chain': '10-speed',
+                                 'sitz': 'leder', 'tire_size': '35'}
